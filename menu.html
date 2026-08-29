@@ -59,10 +59,10 @@
   /* ---------- navbar (shared) ---------- */
   header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:1.6rem 0; transition: padding .5s var(--ease), border-color .5s var(--ease); border-bottom:1px solid transparent; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); }
   header.scrolled{ padding:1rem 0; border-bottom:1px solid var(--border); }
-  nav{ display:flex; align-items:center; justify-content:space-between; }
-  .brand{ display:flex; align-items:center; gap:.7rem; }
-  .brand svg{ width:34px; height:34px; }
-  .brand-name{ font-family:'Fraunces',serif; font-size:1.15rem; letter-spacing:.06em; }
+  nav{ display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+  .brand{ display:flex; align-items:center; gap:.7rem; min-width:0; flex-shrink:1; }
+  .brand svg{ width:34px; height:34px; flex-shrink:0; }
+  .brand-name{ font-family:'Fraunces',serif; font-size:1.15rem; letter-spacing:.06em; white-space:nowrap; }
   .brand-name b{ color:var(--accent); font-weight:500; }
   .nav-links{ display:flex; align-items:center; gap:2.4rem; }
   .nav-links a{ position:relative; font-family:'Space Grotesk',sans-serif; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim); padding:.3rem 0; }
@@ -71,8 +71,8 @@
   @media (hover:hover) and (pointer:fine){ .nav-links a:hover::after{ width:100%; } }
   .nav-links a.active{ color:var(--accent); }
   .nav-links a.active::after{ width:100%; }
-  .nav-right{ display:flex; align-items:center; gap:1.4rem; }
-  .theme-toggle{ width:42px; height:42px; border-radius:50%; border:1px solid var(--border); background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--accent); transition: border-color .4s var(--ease), transform .4s var(--ease); }
+  .nav-right{ display:flex; align-items:center; gap:1.4rem; flex-shrink:0; }
+  .theme-toggle{ width:42px; height:42px; border-radius:50%; border:1px solid var(--border); background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--accent); transition: border-color .4s var(--ease), transform .4s var(--ease); flex-shrink:0; }
   @media (hover:hover) and (pointer:fine){ .theme-toggle:hover{ border-color:var(--accent); transform:rotate(14deg); } }
   .theme-toggle svg{ width:18px; height:18px; }
   .theme-toggle .sun{ display:none; }
@@ -84,18 +84,18 @@
   @media (hover:hover) and (pointer:fine){ .btn-solid:hover{ background:transparent; color:var(--accent); letter-spacing:.2em; } }
   .btn svg{ width:14px; height:14px; transition:transform .4s var(--ease); }
   @media (hover:hover) and (pointer:fine){ .btn:hover svg{ transform:translateX(4px); } }
-  .burger{ display:none; width:42px; height:42px; border-radius:50%; border:1px solid var(--border); background:transparent; position:relative; cursor:pointer; z-index:200; }
+  .burger{ display:none; width:42px; height:42px; min-width:42px; border-radius:50%; border:1px solid var(--border); background:transparent; position:relative; cursor:pointer; z-index:200; flex-shrink:0; -webkit-tap-highlight-color: transparent; }
   .burger span{ position:absolute; left:12px; right:12px; height:1px; background:var(--text); transition: transform .45s var(--ease), opacity .3s var(--ease), top .45s var(--ease); }
   .burger span:nth-child(1){ top:16px; } .burger span:nth-child(2){ top:21px; } .burger span:nth-child(3){ top:26px; }
   .burger.open span:nth-child(1){ top:21px; transform:rotate(45deg); }
   .burger.open span:nth-child(2){ opacity:0; }
   .burger.open span:nth-child(3){ top:21px; transform:rotate(-45deg); }
-  .mobile-nav{ position:fixed; inset:0; z-index:150; background:var(--bg); display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:1.6rem; padding:8vh 8vw; transform:translateY(-100%); opacity:0; transition: transform .6s var(--ease), opacity .5s var(--ease); pointer-events:none; }
+  .mobile-nav{ position:fixed; inset:0; z-index:150; background:var(--bg); display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:1.6rem; padding:8vh 8vw; transform:translateY(-100%); opacity:0; transition: transform .6s var(--ease), opacity .5s var(--ease); pointer-events:none; overflow-y:auto; }
   .mobile-nav.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
   .mobile-nav a{ font-family:'Fraunces',serif; font-size:2.1rem; color:var(--text); }
   .mobile-nav a.active{ color:var(--accent); }
   .mobile-nav .m-links{ display:flex; flex-direction:column; gap:1.1rem; }
-  .mobile-nav .m-foot{ margin-top:auto; display:flex; gap:1rem; }
+  .mobile-nav .m-foot{ margin-top:auto; display:flex; gap:1rem; padding-top:2rem; }
 
   /* ---------- menu masthead (index / contents style, NOT a photo hero) ---------- */
   .masthead{ position:relative; padding:20vh 0 8vh; overflow:hidden; }
@@ -227,6 +227,12 @@
   /* ---------- responsive ---------- */
   @media(max-width:1100px){
     .nav-links{ display:none; } .burger{ display:block; }
+    .nav-right{ gap:.7rem; }
+    /* The full "Reserve" pill button used to stay visible on mobile
+       and crowded the header alongside the theme toggle and burger.
+       The mobile drawer already has its own full-width reserve button,
+       so the header one is hidden below this breakpoint. */
+    #navCta{ display:none !important; }
     .ledger-grid{ grid-template-columns:1fr; }
     .rail{ display:none; }
     .chip-bar{ display:block; }
@@ -249,6 +255,17 @@
     .foot-bottom{ flex-direction:column; align-items:flex-start; }
     .mobile-nav a{ font-size:1.6rem; }
   }
+  /* Extra-small phones (older/entry-level Android, iPhone SE, etc.) */
+  @media(max-width:400px){
+    header{ padding:1.2rem 0; }
+    header.scrolled{ padding:.85rem 0; }
+    .brand-name{ font-size:1rem; }
+    .brand svg{ width:28px; height:28px; }
+    .theme-toggle{ width:38px; height:38px; }
+    .burger{ width:38px; height:38px; min-width:38px; }
+    .mobile-nav{ padding:7vh 7vw; gap:1.2rem; }
+    .mobile-nav a{ font-size:1.4rem; }
+  }
 </style>
 </head>
 <body>
@@ -270,17 +287,17 @@
         <a href="menu.html" class="active">Menu</a>
         <!-- <a href="index.html#gallery">Gallery</a> -->
         <!-- <a href="index.html#chef">Chef</a> -->
-        <a href="resrvations.html">Reservations</a>
+        <a href="reservations.html">Reservations</a>
       </div>
       <div class="nav-right">
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
           <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
           <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
         </button>
-        <a href="resrvations.html" class="btn btn-solid">Reserve
+        <a href="reservations.html" class="btn btn-solid" id="navCta">Reserve
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
       </div>
     </nav>
   </div>
@@ -294,9 +311,9 @@
     <a href="menu.html" class="active">Menu</a>
     <!-- <a href="index.html#gallery">Gallery</a> -->
     <!-- <a href="index.html#chef">Chef</a> -->
-    <a href="resrvations.html">Reservations</a>
+    <a href="reservations.html">Reservations</a>
   </div>
-  <div class="m-foot"><a href="resrvations.html" class="btn btn-solid">Reserve a Table</a></div>
+  <div class="m-foot"><a href="reservations.html" class="btn btn-solid">Reserve a Table</a></div>
 </div>
 
 <main>
@@ -387,7 +404,7 @@
         <a href="index.html">Home</a>
         <a href="philosophy.html">Philosophy</a>
         <a href="menu.html">Menu</a>
-        <a href="resrvations.html">Reservations</a>
+        <a href="reservations.html">Reservations</a>
         <!-- <a href="index.html#gallery">Gallery</a> -->
         <!-- <a href="index.html#chef">Chef</a> -->
       </div>
@@ -717,13 +734,23 @@ onScroll();
 const burger = document.getElementById('burger');
 const mobileNav = document.getElementById('mobileNav');
 burger.addEventListener('click', () => {
-  burger.classList.toggle('open');
-  mobileNav.classList.toggle('open');
-  document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+  const isOpen = mobileNav.classList.toggle('open');
+  burger.classList.toggle('open', isOpen);
+  burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  document.body.style.overflow = isOpen ? 'hidden' : '';
 });
 mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-  burger.classList.remove('open'); mobileNav.classList.remove('open'); document.body.style.overflow = '';
+  burger.classList.remove('open'); mobileNav.classList.remove('open');
+  burger.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
 }));
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 1100 && mobileNav.classList.contains('open')) {
+    burger.classList.remove('open'); mobileNav.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+});
 
 const themeToggle = document.getElementById('themeToggle');
 themeToggle.addEventListener('click', () => {
