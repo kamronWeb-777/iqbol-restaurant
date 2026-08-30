@@ -428,27 +428,108 @@
 
 <script>
 /* ================= IMAGE POOLS (cycled per category) ================= */
-const IMG = id => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=400&q=80`;
-const IMG_BIG = id => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1000&q=80`;
+const IMG = slug => `img/${slug}.jpg`;
+const IMG_BIG = slug => `img/${slug}-lg.jpg`;
 
-const POOL = {
-  soups:  ['1547592180-85f173990554','1526318472351-c75fcf070305','1512058564366-18510be2db19','1466978913421-dad2ebd01d17'],
-  hot:    ['1512058564366-18510be2db19','1601050690597-df0568f70950','1544025162-d76694265947','1526318472351-c75fcf070305'],
-  grill:  ['1552566626-52f8b828add9','1544025162-d76694265947','1432139555190-58524dae6a55','1577106263724-2c8e03bfe9cf','1509440159596-0249088772ff','1517841905240-472988babdf9'],
-  salad:  ['1512621776951-a57141f2eefd','1540189549336-e6e99c3679fe','1497515114629-f71d768fd07c','1512058564366-18510be2db19'],
-  drinks: ['1497534446932-c925b458314e','1544787219-7f47ccb76574','1546171753-ed0c8f4bda6f','1571934811356-5cc061b6821f','1510812431401-41d2bd2722f3'],
+/* Har bir taom uchun shu taomning o'z rasmi (img/ papkasida saqlanadi).
+   Kalit — menyudagi aniq taom nomi, qiymati — rasm fayl nomi. */
+const DISH_SLUG = {
+  "Борщ": "borsch",
+  "Мастава": "mastava",
+  "Суп с лапшой": "sup-s-lapshoi",
+  "Ковурма лагман": "kovurma-lagman",
+  "Тушбера шурва": "tushbera-shurva",
+  "Кайнатма шурва": "kai-natma-shurva",
+  "Тефтель шурва": "teftel-shurva",
+  "Бешбармак / Больон": "beshbarmak-bolon",
+  "Хрустящий баклажан": "hrustyaschii-baklazhan",
+  "Хрустящий шампиньон": "hrustyaschii-shampinon",
+  "Картошка фри": "kartoshka-fri",
+  "Жареные пельмени": "zharenye-pelmeni",
+  "Самса": "samsa",
+  "Нон шашлык": "non-shashlyk",
+  "Тандир": "tandir",
+  "Казан кебаб": "kazan-kebab",
+  "Уйгурский жир": "ui-gurskii-zhir",
+  "Манчури": "manchuri",
+  "Узбекский жир": "uzbekskii-zhir",
+  "Баран жир": "baran-zhir",
+  "Хасиб мясной": "hasib-myasnoi",
+  "Мульги жир": "mulgi-zhir",
+  "Овощной шашлык": "ovoschnoi-shashlyk",
+  "Помидор шашлык": "pomidor-shashlyk",
+  "Грибы шашлык": "griby-shashlyk",
+  "Думба": "dumba",
+  "Печень": "pechen",
+  "Каре ягненка": "kare-yagnenka",
+  "Кавказ баранина": "kavkaz-baranina",
+  "Кавказ говядина": "kavkaz-govyadina",
+  "Шашлык куриный": "shashlyk-kurinyi",
+  "Кавказ куриный": "kavkaz-kurinyi",
+  "Куриный гиждуван": "kurinyi-gizhduvan",
+  "Сосиска острый": "sosiska-ostryi",
+  "Куриная крылышка": "kurinaya-krylyshka",
+  "Гиждуван": "gizhduvan",
+  "Сосиска сладкий": "sosiska-sladkii",
+  "Наполеон": "napoleon",
+  "Рулет шашлык": "rulet-shashlyk",
+  "Сырой фарш": "syroi-farsh",
+  "Шашлык ассорти №1": "shashlyk-assorti-no1",
+  "Шашлык ассорти №2": "shashlyk-assorti-no2",
+  "Страчателла с томатом": "strachatella-s-tomatom",
+  "Тунец": "tunec",
+  "Итальянский шпинат": "italyanskii-shpinat",
+  "Капрезе": "kapreze",
+  "Салат Тулим": "salat-tulim",
+  "Греческий": "grecheskii",
+  "Подводочку": "podvodochku",
+  "Японский": "yaponskii",
+  "Чабан": "chaban",
+  "Икровка": "ikrovka",
+  "Свежий": "svezhii",
+  "Свежий катыкли": "svezhii-katykli",
+  "Шакароб": "shakarob",
+  "Чакич": "chakich",
+  "Фруктовый салат": "fruktovyi-salat",
+  "Мужской каприз": "muzhskoi-kapriz",
+  "Кесарь": "kesar",
+  "Смак": "smak",
+  "Французский": "francuzskii",
+  "Оливье": "olive",
+  "Мясное ассорти": "myasnoe-assorti",
+  "Сырное ассорти": "syrnoe-assorti",
+  "Меза ассорти": "meza-assorti",
+  "Соленое ассорти": "solenoe-assorti",
+  "Мохито киви": "mohito-kivi",
+  "Ягода": "yagoda",
+  "Классический": "klassicheskii",
+  "Манго-Маракуйя": "mango-marakui-ya",
+  "Тархун": "tarhun",
+  "Клубничный": "klubnichnyi",
+  "Чайник": "chai-nik",
+  "Чай ассорти": "chai-assorti",
+  "Нон / Non": "non-non",
+  "Кола": "kola",
+  "Фанта": "fanta",
+  "Пепси": "pepsi",
+  "Сок": "sok",
+  "Ред бул": "red-bul",
+  "Адреналин": "adrenalin",
+  "Флеш": "flesh",
+  "Карлавори": "karlavori",
+  "Вода": "voda",
+  "Чорток": "chortok",
+  "Писта": "pista",
+  "Бодом": "bodom",
+  "Кешью": "keshyu",
+  "Пивное ассорти": "pivnoe-assorti"
 };
-let cursor = {};
-function nextImg(cat){
-  cursor[cat] = (cursor[cat] ?? -1) + 1;
-  const arr = POOL[cat];
-  return arr[cursor[cat] % arr.length];
-}
+const FALLBACK = 'placeholder';
 
 /* ================= DATA ================= */
 function item(name, price, desc, ingredients, cat, qty){
-  const id = nextImg(cat);
-  return { name, price, desc, ingredients: ingredients || [], cat, qty: qty || '', img: id };
+  const slug = DISH_SLUG[name] || FALLBACK;
+  return { name, price, desc, ingredients: ingredients || [], cat, qty: qty || '', img: slug };
 }
 
 const CHAPTERS = [
